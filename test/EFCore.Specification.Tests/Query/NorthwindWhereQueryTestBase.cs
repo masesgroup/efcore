@@ -1419,31 +1419,6 @@ public abstract class NorthwindWhereQueryTestBase<TFixture>(TFixture fixture) : 
             elementAsserter: (e, a) => AssertCollection(e.Subquery, a.Subquery));
 
     [ConditionalTheory, MemberData(nameof(IsAsyncData))]
-    public virtual Task Where_Queryable_null_check_with_Contains(bool async)
-    {
-        return AssertQuery(
-            async,
-            ss =>
-            {
-                var ids = ss.Set<Customer>().Select(c => c.CustomerID);
-                return ss.Set<Customer>().Where(c => ids != null && ids.Contains(c.CustomerID));
-            });
-    }
-
-    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
-    public virtual Task Where_Queryable_null_check_equal(bool async)
-    {
-        return AssertQuery(
-            async,
-            ss =>
-            {
-                var ids = ss.Set<Customer>().Select(c => c.CustomerID);
-                return ss.Set<Customer>().Where(c => ids == null || !ids.Contains(c.CustomerID));
-            },
-            assertEmpty: true);
-    }
-
-    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
     public virtual Task Where_Queryable_ToList_Count_member(bool async)
         => AssertQuery(
             async,
@@ -1462,6 +1437,27 @@ public abstract class NorthwindWhereQueryTestBase<TFixture>(TFixture fixture) : 
                 .Where(e => e.Length == 0),
             assertOrder: true,
             elementAsserter: (e, a) => AssertCollection(e, a));
+
+    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Where_Queryable_not_null_check_with_Contains(bool async)
+        => AssertQuery(
+            async,
+            ss =>
+            {
+                var ids = ss.Set<Customer>().Select(c => c.CustomerID);
+                return ss.Set<Customer>().Where(c => ids != null && ids.Contains(c.CustomerID));
+            });
+
+    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Where_Queryable_null_check_with_Contains(bool async)
+        => AssertQuery(
+            async,
+            ss =>
+            {
+                var ids = ss.Set<Customer>().Select(c => c.CustomerID);
+                return ss.Set<Customer>().Where(c => ids == null || !ids.Contains(c.CustomerID));
+            },
+            assertEmpty: true);
 
     [ConditionalTheory, MemberData(nameof(IsAsyncData))]
     public virtual Task Where_collection_navigation_ToList_Count(bool async)
