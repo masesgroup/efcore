@@ -1431,6 +1431,19 @@ public abstract class NorthwindWhereQueryTestBase<TFixture>(TFixture fixture) : 
     }
 
     [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Where_Queryable_null_check_equal(bool async)
+    {
+        return AssertQuery(
+            async,
+            ss =>
+            {
+                var ids = ss.Set<Customer>().Select(c => c.CustomerID);
+                return ss.Set<Customer>().Where(c => ids == null || !ids.Contains(c.CustomerID));
+            },
+            assertEmpty: true);
+    }
+
+    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
     public virtual Task Where_Queryable_ToList_Count_member(bool async)
         => AssertQuery(
             async,
